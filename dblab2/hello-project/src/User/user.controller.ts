@@ -1,4 +1,4 @@
-import { Body, Controller, Get, ParseIntPipe, Post, Put } from '@nestjs/common';
+import { Body, Controller, Get, ParseIntPipe, Post, Put, Delete, Param } from '@nestjs/common';
 import CreateUserDto from './dto/create-user.dto';
 import { UserServices } from './user.service';
 
@@ -23,4 +23,18 @@ export class UserController {
   getBooks(@Body('userID', ParseIntPipe) userID: number) {
     return this.usersServices.getBooksOfUser(userID);
   }
+
+  // changeUser() will handle updating of user properties.
+  @Put(':id')
+  async change(@Param('id') id: number, @Body() genre: CreateUserDto) {
+    return this.usersServices.change(id, genre)
+  }
+
+  // deleteUser() will handle deletion of user entity.
+  @Delete(':id')
+  async delete(@Param('id') id: number) {
+    return this.usersServices.delete(id)
+  }
+
+
 }

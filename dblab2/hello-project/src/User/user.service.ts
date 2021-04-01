@@ -25,4 +25,17 @@ export class UserServices {
     });
     return user.books;
   }
+
+  // change method, called from user.controller.
+  async change(id: number, userDetails: CreateUserDto): Promise<any> {
+    const userEntity: any = {};
+    userEntity.name = userDetails.name;
+    return await UserEntity.update({id}, userEntity);
+  }
+
+  // delete method, called from user.controller.
+  async delete(id: number): Promise<any> {
+    return await UserEntity.delete({id});
+  }
+
 }

@@ -1,9 +1,10 @@
+import { Body, Controller, Get, ParseIntPipe, Post, Put, Delete, Param } from '@nestjs/common';
 import BookEntity from '../db/book.entity';
 import UserEntity from '../db/user.entity';
 import { createQueryBuilder, getConnection } from 'typeorm';
 import GenreEntity from '../db/genre.entity';
 import CreateBookDto from '../User/dto/create-book.dto';
-import { Body, Controller, Get, Post } from '@nestjs/common';
+
 
 @Controller('books')
 export default class BooksService {
@@ -29,4 +30,22 @@ export default class BooksService {
     // const user: UserEntity = await UserEntity.findOne({where: {id: 2}, relations: ['books']});
     return BookEntity.find();
   }
+
+
+  // change method
+  @Put(':id')
+  async change(id: number, bookDetails: CreateBookDto): Promise<any> {
+    let newBook: any = {};
+    const { name, userID } = bookDetails;
+    newBook.user = await UserEntity.findOne(userID);
+    newBook.name = name;
+    return BookEntity.update({id},newBook);
+  }
+
+  // delete method
+  @Delete(':id')
+  async delete(id: number): Promise<any> {
+    return await BookEntity.delete({ id });
+  }
 }
+

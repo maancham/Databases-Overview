@@ -1,10 +1,11 @@
 {
-  "type": "postgres",
-  "host": "localhost",
-  "port": 5432,
-  "username": "postgres",
-  "password": "1234",
-  "database": "todoapp",
-  "entities": ["dist/**/**.entity{.ts,.js}"],
-  "synchronize": true
+  "type": "sqlite",
+  "database": "./database.sqlite",
+  "synchronize": "true",
+  "entities": [
+    "dist/db/**/*.js"
+  ],
+  "cli": {
+    "entitiesDir": "src/db"
+  }
 }

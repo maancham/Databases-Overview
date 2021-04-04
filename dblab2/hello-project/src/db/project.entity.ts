@@ -30,7 +30,7 @@ export default class ProjectEntity extends BaseEntity
     min_experience: string;
 
     // n:1 relation with taskmaster
-    @ManyToOne((type) => TaskmasterEntity, (taskmaster) => taskmaster.charges)
+    @ManyToOne((type) => TaskmasterEntity, (taskmaster) => taskmaster.projects)
     taskmaster: TaskmasterEntity;
 
 }

@@ -16,11 +16,16 @@ export class TaskmasterController {
         return this.taskmasterServices.insertTaskmaster(taskmaster);
     }
 
-    // error codes to be added!
     // getTaskmaster() will return a taskmaster designated by id
     @Get(':id')
     getTaskmaster(@Param('id') id: number) {
       return this.taskmasterServices.getTaskmaster(id);
+    }
+
+    // getAllTaskmasters() will return all taskmasters in system:
+    @Get()
+    async getAllTaskmasters() {
+      return this.taskmasterServices.getAllTaskmasters();
     }
 
     // deleteTaskmaster() will delete a taskmaster designated by id
@@ -29,6 +34,7 @@ export class TaskmasterController {
       return this.taskmasterServices.deleteTaskmaster(id);
     }
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // addProject() will create a new project by a taskmaster
     @Post(':id/projects')
@@ -45,6 +51,12 @@ export class TaskmasterController {
       return this.taskmasterServices.getProject(id, pid);
     }
 
+    // getAllprojects() return all projects for a taskmaster:
+    @Get(':id/projects')
+    getAllprojects(@Param('id') id: number) {
+      return this.taskmasterServices.getAllprojects(id);
+    }
+
     // updateProject() will change properties of a project:
     @Put(':id/projects/:pid')
     updateProject(@Param('id') id: number, @Param('pid') pid: number, @Body() project: CreateProjectDto) {
@@ -59,5 +71,43 @@ export class TaskmasterController {
     deleteProject(@Param('id') id: number, @Param('pid') pid: number) {
       return this.taskmasterServices.deleteProject(id, pid);
     }
-  
+
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    // addCharge() will create a new charge by a taskmaster
+    @Post(':id/charges')
+    addCharge(@Param('id') id: number, @Body() charge: CreateChargeDto) {
+      if (id != charge.taskmasterID) {
+        throw new HttpException('IDs do not match', HttpStatus.BAD_REQUEST);
+      }
+      return this.taskmasterServices.insertCharge(id, charge);
+    }
+
+    // getCharge() return a charge designated by id 
+    @Get(':id/charges/:cid')
+    getCharge(@Param('id') id: number, @Param('cid') cid: number) {
+      return this.taskmasterServices.getCharge(id, cid);
+    }
+
+    // getAllcharges() return all charges for a taskmaster:
+    @Get(':id/charges')
+    getAllcharges(@Param('id') id: number) {
+      return this.taskmasterServices.getAllcharges(id);
+    }
+
+    // updateCharge() will change properties of a charge:
+    @Put(':id/charges/:cid')
+    updateCharge(@Param('id') id: number, @Param('cid') cid: number, @Body() charge: CreateChargeDto) {
+      if (id != charge.taskmasterID) {
+        throw new HttpException('IDs do not match', HttpStatus.BAD_REQUEST);
+      }  
+      return this.taskmasterServices.updateCharge(id, cid, charge);
+    }
+
+    // deleteCharge() will delete a charge:
+    @Delete(':id/charges/:cid')
+    deleteCharge(@Param('id') id: number, @Param('cid') cid: number) {
+      return this.taskmasterServices.deleteCharge(id, cid);
+    }
 }

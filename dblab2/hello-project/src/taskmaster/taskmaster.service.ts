@@ -43,16 +43,21 @@ export class TaskmasterService {
       async getTaskmaster(id: number): Promise<TaskmasterEntity> {
           const taskmaster = await TaskmasterEntity.findOne(id);
           if (!taskmaster?.id) {
-            throw new HttpException('Taskmaster not found!', HttpStatus.BAD_REQUEST);
+            throw new HttpException('Taskmaster not found!', 404);
           }
           return taskmaster;
+      }
+
+      //getting all taskmasters inside the system:
+      async getAllTaskmasters(): Promise<TaskmasterEntity[]> {
+        return TaskmasterEntity.find();
       }
 
       // deleting a taskmaster:
       async deleteTaskmaster(id: number): Promise<any> {
         const taskmaster = await TaskmasterEntity.findOne(id);
         if (!taskmaster?.id) {
-          throw new HttpException('Taskmaster not found!', HttpStatus.BAD_REQUEST);
+          throw new HttpException('Taskmaster not found!', 404);
         }
         return await TaskmasterEntity.delete({ id });
       }
@@ -63,7 +68,7 @@ export class TaskmasterService {
       async insertProject(id: number, project: CreateProjectDto): Promise<ProjectEntity> {
         const taskmaster = await TaskmasterEntity.findOne(id);
         if (!taskmaster?.id) {
-            throw new HttpException('Taskmaster not found!', HttpStatus.BAD_REQUEST);
+            throw new HttpException('Taskmaster not found!', 404);
         }
         const { name, priority, type, information, initial_price, initial_deadline, min_experience, taskmasterID} = project;
         const new_project = new ProjectEntity();
@@ -84,11 +89,11 @@ export class TaskmasterService {
       async getProject(id: number, pid: number): Promise<ProjectEntity> {
         const taskmaster = await TaskmasterEntity.findOne(id);
         if (!taskmaster?.id) {
-            throw new HttpException('Taskmaster not found!', HttpStatus.BAD_REQUEST);
+            throw new HttpException('Taskmaster not found!', 404);
         }
         const project = await ProjectEntity.findOne({where: { id: pid }, relations: ['taskmaster']});
         if (!project?.id) {
-            throw new HttpException('Project not found!', HttpStatus.BAD_REQUEST);
+            throw new HttpException('Project not found!', 404);
         }
         if (project.taskmaster?.id != id) {
             throw new HttpException('Action not allowed!', HttpStatus.FORBIDDEN);
@@ -96,6 +101,16 @@ export class TaskmasterService {
         else {
             return project;
         }
+      }
+
+      // returning all projects:
+      async getAllprojects(id: number): Promise<ProjectEntity[]> {
+        const taskmaster = await TaskmasterEntity.findOne(id);
+        if (!taskmaster?.id) {
+            throw new HttpException('Taskmaster not found!', 404);
+        }
+        const taskmaster_obj = await TaskmasterEntity.findOne({where: { id: id }, relations: ['projects']});
+        return taskmaster_obj.projects;
       }
 
       // updating properties of a specific project:
@@ -111,4 +126,64 @@ export class TaskmasterService {
         return await ProjectEntity.delete({ id: pid });
       }
       
+      //////////////////////////////////////////////////////////////////////////////////////////////////////
+      
+      // createing a charge:
+      async insertCharge(id: number, charge: CreateChargeDto): Promise<ChargeEntity> {
+        const taskmaster = await TaskmasterEntity.findOne(id);
+        if (!taskmaster?.id) {
+            throw new HttpException('Taskmaster not found!', 404);
+        }
+        const { security_code, bank_name, amount, date_issued, taskmasterID} = charge;
+        const new_charge = new ChargeEntity();
+        new_charge.security_code = security_code;
+        new_charge.bank_name = bank_name;
+        new_charge.amount = amount;
+        new_charge.date_issued = date_issued;
+        new_charge.taskmaster = taskmaster;
+
+        await new_charge.save();
+        return new_charge;
+      }
+
+      // searching for a specific charge:
+      async getCharge(id: number, cid: number): Promise<ChargeEntity> {
+        const taskmaster = await TaskmasterEntity.findOne(id);
+        if (!taskmaster?.id) {
+            throw new HttpException('Taskmaster not found!', 404);
+        }
+        const charge = await ChargeEntity.findOne({where: { id: cid }, relations: ['taskmaster']});
+        if (!charge?.id) {
+            throw new HttpException('Charge not found!', 404);
+        }
+        if (charge.taskmaster?.id != id) {
+            throw new HttpException('Action not allowed!', HttpStatus.FORBIDDEN);
+        }
+        else {
+            return charge;
+        }
+      }
+
+      // returning all charges:
+      async getAllcharges(id: number): Promise<ChargeEntity[]> {
+        const taskmaster = await TaskmasterEntity.findOne(id);
+        if (!taskmaster?.id) {
+            throw new HttpException('Taskmaster not found!', 404);
+        }
+        const taskmaster_obj = await TaskmasterEntity.findOne({where: { id: id }, relations: ['charges']});
+        return taskmaster_obj.charges;
+      }
+
+      // updating properties of a specific charge:
+      async updateCharge(id: number, cid: number, charge: CreateChargeDto): Promise<any> {
+        await this.getCharge(id, cid);
+        const { taskmasterID, ...charge_fields} = charge;
+        return ChargeEntity.update({ id: cid }, charge_fields);
+      }
+
+      // deleting a charge:
+      async deleteCharge(id: number, cid: number): Promise<any> {
+        await this.getCharge(id, cid);
+        return await ChargeEntity.delete({ id: cid });
+      }
 }

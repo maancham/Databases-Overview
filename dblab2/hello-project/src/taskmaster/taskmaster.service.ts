@@ -5,6 +5,7 @@ import CreateChargeDto from '../jobseekers/dto/create-charge.dto';
 import TaskmasterEntity from '../db/taskmaster.entity';
 import ChargeEntity from '../db/charge.entity';
 import ProjectEntity from '../db/project.entity';
+import RequestEntity from '../db/request.entity';
 import { HttpException, HttpStatus } from '@nestjs/common';
 
 
@@ -70,7 +71,8 @@ export class TaskmasterService {
         if (!taskmaster?.id) {
             throw new HttpException('Taskmaster not found!', 404);
         }
-        const { name, priority, type, information, initial_price, initial_deadline, min_experience, taskmasterID} = project;
+        const { name, priority, type, information, initial_price, initial_deadline, min_experience,
+           taskmasterID, requestIDs} = project;
         const new_project = new ProjectEntity();
         new_project.name = name;
         new_project.priority = priority;
@@ -80,6 +82,13 @@ export class TaskmasterService {
         new_project.initial_deadline = initial_deadline;
         new_project.min_experience = min_experience;
         new_project.taskmaster = taskmaster;
+        new_project.requests = [];
+
+        for (let i = 0; i < requestIDs.length ; i++)
+        {
+            const request = await RequestEntity.findOne(requestIDs[i]);
+            new_project.requests.push(request);
+        }
 
         await new_project.save();
         return new_project;
@@ -116,7 +125,7 @@ export class TaskmasterService {
       // updating properties of a specific project:
       async updateProject(id: number, pid: number, project: CreateProjectDto): Promise<any> {
         await this.getProject(id, pid);
-        const { taskmasterID, ...project_fields} = project;
+        const { taskmasterID, requestIDs, ...project_fields} = project;
         return ProjectEntity.update({ id: pid }, project_fields);
       }
       

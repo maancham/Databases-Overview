@@ -1,5 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, ManyToOne, ManyToMany, OneToMany } from 'typeorm';
 import FreelancerEntity from './freelancer.entity';
+import ProjectEntity from './project.entity';
 
 
 
@@ -27,5 +28,9 @@ export default class RequestEntity extends BaseEntity
     // n:1 relation with freelancer
     @ManyToOne((type) => FreelancerEntity, (freelancer) => freelancer.requests)
     freelancer: FreelancerEntity;
+
+    // n:1 relation with project
+    @ManyToOne((type) => ProjectEntity, (project) => project.requests)
+    project: ProjectEntity;
 
 }

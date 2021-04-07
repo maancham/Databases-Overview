@@ -18,4 +18,7 @@ export default class CreateProjectDto {
 
     @ApiProperty()
     readonly taskmasterID: number;
+
+    @ApiProperty()
+    readonly requestIDs: number[];
 }

@@ -40,7 +40,7 @@ export class TaskmasterController {
     @Post(':id/projects')
     addProject(@Param('id') id: number, @Body() project: CreateProjectDto) {
       if (id != project.taskmasterID) {
-        throw new HttpException('IDs do not match', HttpStatus.BAD_REQUEST);
+        throw new HttpException('IDs do not match', HttpStatus.FORBIDDEN);
       }
       return this.taskmasterServices.insertProject(id, project);
     }
@@ -61,7 +61,7 @@ export class TaskmasterController {
     @Put(':id/projects/:pid')
     updateProject(@Param('id') id: number, @Param('pid') pid: number, @Body() project: CreateProjectDto) {
       if (id != project.taskmasterID) {
-        throw new HttpException('IDs do not match', HttpStatus.BAD_REQUEST);
+        throw new HttpException('IDs do not match', HttpStatus.FORBIDDEN);
       }  
       return this.taskmasterServices.updateProject(id, pid, project);
     }
@@ -79,7 +79,7 @@ export class TaskmasterController {
     @Post(':id/charges')
     addCharge(@Param('id') id: number, @Body() charge: CreateChargeDto) {
       if (id != charge.taskmasterID) {
-        throw new HttpException('IDs do not match', HttpStatus.BAD_REQUEST);
+        throw new HttpException('IDs do not match', HttpStatus.FORBIDDEN);
       }
       return this.taskmasterServices.insertCharge(id, charge);
     }
@@ -100,7 +100,7 @@ export class TaskmasterController {
     @Put(':id/charges/:cid')
     updateCharge(@Param('id') id: number, @Param('cid') cid: number, @Body() charge: CreateChargeDto) {
       if (id != charge.taskmasterID) {
-        throw new HttpException('IDs do not match', HttpStatus.BAD_REQUEST);
+        throw new HttpException('IDs do not match', HttpStatus.FORBIDDEN);
       }  
       return this.taskmasterServices.updateCharge(id, cid, charge);
     }

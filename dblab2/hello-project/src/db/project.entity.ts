@@ -1,5 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, ManyToOne, ManyToMany, OneToMany } from 'typeorm';
 import TaskmasterEntity from './taskmaster.entity';
+import RequestEntity from './request.entity';
 
 
 @Entity()
@@ -32,5 +33,9 @@ export default class ProjectEntity extends BaseEntity
     // n:1 relation with taskmaster
     @ManyToOne((type) => TaskmasterEntity, (taskmaster) => taskmaster.projects)
     taskmaster: TaskmasterEntity;
+
+    // 1:n relation with requests
+    @OneToMany((type) => RequestEntity, (request) => request.project)
+    requests: RequestEntity[];
 
 }

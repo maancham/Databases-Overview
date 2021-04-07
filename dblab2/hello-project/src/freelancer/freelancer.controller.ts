@@ -64,19 +64,19 @@ export class FreelancerController {
       return this.freelancerServices.getAllrequests(id);
     }
 
-    // // updateCharge() will change properties of a charge:
-    // @Put(':id/charges/:cid')
-    // updateCharge(@Param('id') id: number, @Param('cid') cid: number, @Body() charge: CreateChargeDto) {
-    //   if (id != charge.taskmasterID) {
-    //     throw new HttpException('IDs do not match', HttpStatus.FORBIDDEN);
-    //   }  
-    //   return this.taskmasterServices.updateCharge(id, cid, charge);
-    // }
+    // updateRequest() will change properties of a request:
+    @Put(':id/requests/:rid')
+    updateRequest(@Param('id') id: number, @Param('rid') rid: number, @Body() request: CreateRequestDto) {
+      if (id != request.freelancerID) {
+        throw new HttpException('IDs do not match', HttpStatus.FORBIDDEN);
+      }  
+      return this.freelancerServices.updateRequest(id, rid, request);
+    }
 
-    // // deleteCharge() will delete a charge:
-    // @Delete(':id/charges/:cid')
-    // deleteCharge(@Param('id') id: number, @Param('cid') cid: number) {
-    //   return this.taskmasterServices.deleteCharge(id, cid);
-    // }
+    // deleteRequest() will delete a request:
+    @Delete(':id/requests/:rid')
+    deleteRequest(@Param('id') id: number, @Param('rid') rid: number) {
+      return this.freelancerServices.deleteRequest(id, rid);
+    }
 
 }

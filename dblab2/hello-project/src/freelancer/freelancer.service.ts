@@ -118,4 +118,18 @@ export class FreelancerService {
         return freelancer_obj.requests;
     }
 
+    
+    // updating properties of a specific request:
+    async updateRequest(id: number, rid: number, request: CreateRequestDto): Promise<any> {
+        await this.getrequest(id, rid);
+        const { freelancerID, projectID, ...request_fields} = request;
+        return RequestEntity.update({ id: rid }, request_fields);
+    }
+
+    // deleting a request:
+    async deleteRequest(id: number, rid: number): Promise<any> {
+        await this.getrequest(id, rid);
+        return await RequestEntity.delete({ id: rid });
+    }
+
 }

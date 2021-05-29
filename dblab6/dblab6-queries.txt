@@ -1,0 +1,179 @@
+// Part3: section1
+//db.tweets.find(
+	{"mediaContentType":"image/jpeg",
+	 "parentId":{"$exists" : true}},
+	 {"senderName":1})
+
+// Part3: section2
+db.tweets.find(
+	{"sendTimePersian":{"$gt":"1400/02/04 07:45", "$lt":"1400/02/04 08:00"}},
+	{"senderUsername":1,
+	    "type":1})
+	    
+//// Part3: section3
+db.tweets.find(
+	{"sendTimePersian":{"$regex":".*/.*/.{1,2} 08:.*"}},
+	{"senderUsername":1})
+	
+//////////////////////////////////////////////////////////////////////////
+
+//// Part4: section1
+db.tweets.aggregate(
+    [
+        {
+            "$group" : {
+                _id : "$senderUsername",
+                "count" : {"$sum" : 1}
+            }
+        },
+        {
+            "$group" : {
+                _id : {
+                    "$cond" : {
+                        "if" : {"$lt" : ["$count",2]},
+                        "then" : "First group",
+                        "else" : {
+                            "$cond" : {
+                        		"if" : {"$lte" : ["$count",3]},
+                        		"then" : "Second group",
+                        		"else" : {
+                            		"$cond" : {
+                        				"if" : {"$gte" : ["$count",4]},
+                        				"then" : "Third group",
+                        				"else" : "No group!"
+                    				}
+                        		 }
+                            }
+                        }
+                    }
+                },
+                "count" : {"$sum" : 1}
+         	}
+        }
+    ]
+)
+
+
+
+//// Part4: section2
+db.tweets.aggregate(
+    [
+        {
+            "$unwind" : "$hashtags"
+            
+            /* Deconstructs an array field from the input documents 
+            to output a document for each element. Each output document is the input document 
+            with the value of the array field replaced by the element. */
+        },
+        {
+            "$group" : {
+                _id : "$hashtags",
+                "count" : {"$sum" : 1}
+            }
+        },
+        {
+         	"$sort" : { "count" : -1}
+        }
+    ]
+)
+
+
+//// Part4: section3	
+db.tweets.aggregate([
+   {
+   		"$match" : {
+            "parentId" : {"$exists" : true}
+         }
+   },
+   {
+        "$unset" : "type"
+   }
+])
+
+
+
+//// Part4: section4	
+db.tweets.aggregate(
+    [
+        {
+            "$unwind" : "$hashtags"
+        },
+        {
+            "$group" : {
+                _id : "$hashtags",
+                "count" : {"$sum" : 1}
+            }
+        },
+        {
+         	"$sort" : { "count" : -1}
+        },
+        {
+            "$group" : {
+                _id : "$hashtags",
+                "maximun" : { "$first" : "$$ROOT"},
+                "minimum" : { "$last" : "$$ROOT"}
+            }
+        }
+    ]
+)
+
+
+
+//// Part4: section5
+db.tweets.aggregate(
+    [
+       	{
+            "$match" : { "sendTimePersian" : {"$regex" : "1400/02/04 .*:.*"}}
+        },
+        {
+            "$unwind" : "$hashtags"
+            
+            /* Deconstructs an array field from the input documents 
+            to output a document for each element. Each output document is the input document 
+            with the value of the array field replaced by the element. */
+        },
+        {
+            "$group" : {
+                _id : "$hashtags",
+                "count" : {"$sum" : 1}
+            }
+        },
+        {
+         	"$sort" : { "count" : -1},
+        },
+        {
+        	"$limit" : 10
+        }
+    ]
+)
+
+
+//// Part4: section6
+db.tweets.aggregate(
+    [
+       	{
+            "$match" : { "sendTimePersian" : {"$regex" : "1400/02/04 .*:.*"}}
+        },
+        {
+            "$unwind" : "$hashtags"
+            
+            /* Deconstructs an array field from the input documents 
+            to output a document for each element. Each output document is the input document 
+            with the value of the array field replaced by the element. */
+        },
+        {
+            "$group" : {
+                _id : "$senderUsername",
+                "tweet_count" : {"$sum" : 1}
+            }
+        },
+        {
+         	"$sort" : { "tweet_count" : -1},
+        },
+        {
+        	"$limit" : 1
+        }
+    ]
+)
+
+
